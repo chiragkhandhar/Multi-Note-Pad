@@ -2,38 +2,38 @@ package ml.chiragkhandhar.multinodepad;
 
 import java.util.Date;
 
-public class Notes
+class Notes
 {
-    private String title,notesText;
-    private Date lut;
+    private String title,notesText, date;
 
-    public String getTitle()
+    String getTitle()
     {
         return title;
     }
 
-    public void setTitle(String title)
+    void setTitle(String title)
     {
         this.title = title;
     }
 
-    public String getDesc()
+    String getDesc()
     {
         return notesText;
     }
 
-    public void setDesc(String notesText)
+    void setDesc(String notesText)
     {
         this.notesText = notesText;
     }
 
-//    public Date getLut()
-//    {
-//        return lut;
-//    }
-//
-//    public void setLut(Date lut)
-//    {
-//        this.lut = lut;
-//    }
+    String getDate()
+    {
+        return date;
+    }
+
+    void setDate(String date)
+    {
+        this.date = date;
+    }
+
 }

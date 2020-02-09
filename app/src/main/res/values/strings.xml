@@ -3,4 +3,6 @@
     <string name="title">Title</string>
     <string name="notes">Notes</string>
     <string name="file_name">notes.json</string>
+    <string name="last_updated_on">Last Updated on:</string>
+    <string name="chars"> characters</string>
 </resources>
