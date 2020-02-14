@@ -1,20 +1,19 @@
 package ml.chiragkhandhar.multinodepad;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
+import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -26,17 +25,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
+    private RecyclerView rv;
+    private static final int SV_RC = 1, ED_RC = 2;
+    private ArrayList<Notes> notesArrayList = new ArrayList<>();
+    private  NotesAdapter notesAdapter;
     private static final String TAG = "MainActivity";
-    private EditText title, desc;
-    private TextView date, counter;
     private Notes n;
-    private String bT = "",bD = "", aT="",aD="";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,137 +44,65 @@ public class MainActivity extends AppCompatActivity
 
         setupComps();
 
-        title.setTextIsSelectable(true);
-        desc.setMovementMethod(new ScrollingMovementMethod());
-        desc.setTextIsSelectable(true);
 
-        desc.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        notesAdapter = new NotesAdapter(notesArrayList,this);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
-            {
-                int length = desc.length();
-                counter.setText(length +" "+getString(R.string.chars));
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+        rv.setAdapter(notesAdapter);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        loadJsonFile();
     }
 
     private void setupComps()
     {
-        title = findViewById(R.id.title);
-        desc = findViewById(R.id.desc);
-        date = findViewById(R.id.date);
-        counter = findViewById(R.id.counter);
+        rv = findViewById(R.id.recycler);
     }
 
-    @Override
-    protected void onResume()
+    public void loadJsonFile()
     {
-        n = loadFile();
-        if (n != null)
-        {
-            bT = title.getText().toString();
-            bD = desc.getText().toString();
-            title.setText(n.getTitle());
-            desc.setText(n.getDesc());
-            date.setText(n.getDate());
-        }
-
-        super.onResume();
-    }
-
-    private Notes loadFile()
-    {
-        n = new Notes();
         try
         {
             InputStream is = getApplicationContext().openFileInput(getString(R.string.file_name));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            JsonReader jReader = new JsonReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null)
-                sb.append(line);
-            // Creating JSON Object
-            JSONObject jo = new JSONObject(sb.toString());
-            String title = jo.getString("title");
-            String desc = jo.getString("desc");
-            String date = jo.getString("date");
-
-            n.setTitle(title);
-            n.setDesc(desc);
-            n.setDate(date);
-
+            jReader.beginArray();
+            while (jReader.hasNext())
+            {
+                Notes n = new Notes();
+                jReader.beginObject();
+                while (jReader.hasNext())
+                {
+                    String name = jReader.nextName();
+                    switch (name)
+                    {
+                        case "title":
+                            n.setTitle(jReader.nextString());
+                            break;
+                        case "desc":
+                            n.setDesc(jReader.nextString());
+                            break;
+                        case "date":
+                            n.setDate(jReader.nextString());
+                            break;
+                        default:
+                            jReader.skipValue();
+                            break;
+                    }
+                }
+                jReader.endObject();
+                notesArrayList.add(n);
+            }
+            jReader.endArray();
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException ex)
         {
             Toast.makeText(this, "No Data Saved so far.",Toast.LENGTH_LONG).show();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            e.printStackTrace();
+            ex.printStackTrace();
         }
-        return n;
     }
 
-    @Override
-    protected void onPause()
-    {
-        Date d;
-
-        aT = title.getText().toString();
-        aD = desc.getText().toString();
-        n.setTitle(aT);
-        n.setDesc(aD);
-        Log.d(TAG, "bp: bT = "+bT+" bD = "+bD+" aT = "+aT+" aD = "+aD);
-
-        if(bT.equals("") && bD.equals("") && aT.equals("") && aD.equals(""))
-        {
-            n.setDate("");
-            Log.d(TAG, "bp: Date Not Updated");
-        }
-        else if(!bT.equals(aT) || !bD.equals(aD))
-        {
-            d = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd',' YYYY hh:mm a ");
-            n.setDate(ft.format(d));
-            Log.d(TAG, "bp: Date Updated.");
-        }
-
-        saveNotes();
-        super.onPause();
-    }
-
-    private void saveNotes()
-    {
-        try
-        {
-            FileOutputStream fos = getApplicationContext().openFileOutput(getString(R.string.file_name), Context.MODE_PRIVATE);
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-            writer.setIndent("  ");
-            writer.beginObject();
-            writer.name("title").value(n.getTitle());
-            writer.name("desc").value(n.getDesc());
-            writer.name("date").value(n.getDate());
-            writer.endObject();
-            writer.close();
-            Toast.makeText(this,"Notes Saved",Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -193,6 +119,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.aboutOption:
                 break;
             case R.id.newOption:
+                Intent i = new Intent(this, EditNotes.class);
+                startActivityForResult(i,SV_RC);
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
@@ -200,5 +128,65 @@ public class MainActivity extends AppCompatActivity
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        switch (requestCode)
+        {
+            case SV_RC:
+                if(resultCode == RESULT_OK)
+                {
+                    Notes temp = new Notes();
+
+                    temp.setTitle(data.getStringExtra("title"));
+                    temp.setDesc(data.getStringExtra("desc"));
+                    temp.setDate(data.getStringExtra("date"));
+                    notesArrayList.add(0,temp);
+
+                    Log.d(TAG, "onActivityResult: bp:  Title: " + data.getStringExtra("title"));
+                    Log.d(TAG, "onActivityResult: bp: Desc: " + data.getStringExtra("desc"));
+                    Log.d(TAG, "onActivityResult: bp: Date: " + data.getStringExtra("date"));
+                    notesAdapter.notifyDataSetChanged();
+                }
+                break;
+            case ED_RC:
+                break;
+            default:
+                Log.d(TAG, "onActivityResult: Request Code" + requestCode);
+
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        writeJsonFile();
+    }
+
+    public void writeJsonFile()
+    {
+        try
+        {
+            FileOutputStream fos = getApplicationContext().openFileOutput(getString(R.string.file_name), Context.MODE_PRIVATE);
+            JsonWriter jWriter = new JsonWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+            jWriter.setIndent(" ");
+            jWriter.beginArray();
+            for (Notes n : notesArrayList)
+            {
+                jWriter.beginObject();
+                jWriter.name("title").value(n.getTitle());
+                jWriter.name("desc").value(n.getDesc());
+                jWriter.name("date").value(n.getDate());
+                jWriter.endObject();
+            }
+            jWriter.endArray();
+            jWriter.close();
+        }
+        catch (Exception ex)
+        {
+            ex.getStackTrace();
+        }
     }
 }

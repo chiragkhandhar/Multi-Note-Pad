@@ -6,6 +6,12 @@ class Notes
 {
     private String title,notesText, date;
 
+    public Notes() {
+        this.title = "";
+        this.notesText = "";
+        this.date = "";
+    }
+
     String getTitle()
     {
         return title;
