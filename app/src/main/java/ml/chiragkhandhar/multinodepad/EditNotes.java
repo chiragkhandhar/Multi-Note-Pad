@@ -36,6 +36,7 @@ public class EditNotes extends AppCompatActivity {
     private TextView date, counter;
     private Notes n;
     private String bT = "",bD = "", aT="",aD="";
+    private int pos;
 
 
     @Override
@@ -49,6 +50,25 @@ public class EditNotes extends AppCompatActivity {
         title.setTextIsSelectable(true);
         desc.setMovementMethod(new ScrollingMovementMethod());
         desc.setTextIsSelectable(true);
+
+        Intent data = getIntent();
+        if (data.hasExtra("noteData"))
+        {
+            Log.d(TAG, "onCreate: bp: hasExtra");
+            n = (Notes) data.getSerializableExtra("noteData");
+            if (n != null)
+            {
+                Log.d(TAG, "onCreate: bp: n | Title = " + n.getTitle());
+                title.setText(n.getTitle());
+                desc.setText(n.getDesc());
+                date.setText(n.getDate());
+            }
+        }
+       
+        if (data.hasExtra("position"))
+        {
+            pos = (int) data.getIntExtra("position",-1);
+        }
 
         desc.addTextChangedListener(new TextWatcher() {
             @Override
@@ -78,21 +98,7 @@ public class EditNotes extends AppCompatActivity {
         counter = findViewById(R.id.counter);
     }
 
-//    @Override
-//    protected void onResume()
-//    {
-//        n = loadFile();
-//        if (n != null)
-//        {
-//            bT = n.getTitle();
-//            bD = n.getDesc();
-//            title.setText(n.getTitle());
-//            desc.setText(n.getDesc());
-//            date.setText(n.getDate());
-//        }
-//
-//        super.onResume();
-//    }
+
 
     private Notes loadFile()
     {
@@ -231,6 +237,8 @@ public class EditNotes extends AppCompatActivity {
         data.putExtra("title", title.getText().toString());
         data.putExtra("desc",desc.getText().toString());
         data.putExtra("date",ft.format(d));
+        if(pos!=-1)
+            data.putExtra("position",pos);
         setResult(RESULT_OK,data);
         finish();
 

@@ -1,8 +1,9 @@
 package ml.chiragkhandhar.multinodepad;
 
+import java.io.Serializable;
 import java.util.Date;
 
-class Notes
+class Notes implements Serializable
 {
     private String title,notesText, date;
 

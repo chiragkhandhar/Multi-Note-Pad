@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +13,8 @@ import android.util.JsonWriter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -27,14 +23,13 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener
 {
     private RecyclerView rv;
     private static final int SV_RC = 1, ED_RC = 2;
     private ArrayList<Notes> notesArrayList = new ArrayList<>();
     private  NotesAdapter notesAdapter;
     private static final String TAG = "MainActivity";
-    private Notes n;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -50,6 +45,28 @@ public class MainActivity extends AppCompatActivity
         rv.setAdapter(notesAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
         loadJsonFile();
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        int pos = rv.getChildLayoutPosition(view);
+        Notes n = notesArrayList.get(pos);
+        Intent data = new Intent(this, EditNotes.class);
+        data.putExtra("noteData", n);
+        data.putExtra("position", pos);
+        startActivityForResult(data,ED_RC);
+        Log.d(TAG, "onClick: bp: pos: "+pos);
+    }
+
+    @Override
+    public boolean onLongClick(View view)
+    {
+        int pos = rv.getChildLayoutPosition(view);
+        notesArrayList.remove(pos);
+        notesAdapter.notifyDataSetChanged();
+
+        return true;
     }
 
     private void setupComps()
@@ -152,6 +169,17 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case ED_RC:
+                if(resultCode == RESULT_OK)
+                {
+                    Notes temp = new Notes();
+
+                    temp.setTitle(data.getStringExtra("title"));
+                    temp.setDesc(data.getStringExtra("desc"));
+                    temp.setDate(data.getStringExtra("date"));
+                    notesArrayList.remove(data.getIntExtra("position",-1));
+                    notesArrayList.add(0,temp);
+                    notesAdapter.notifyDataSetChanged();
+                }
                 break;
             default:
                 Log.d(TAG, "onActivityResult: Request Code" + requestCode);
@@ -189,4 +217,7 @@ public class MainActivity extends AppCompatActivity
             ex.getStackTrace();
         }
     }
+
+
+
 }

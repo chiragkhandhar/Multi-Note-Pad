@@ -27,6 +27,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteViewHolder>
     {
         Log.d(TAG, "onCreateViewHolder: MAKING NEW MyViewHolder");
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_entry,parent,false);
+
+        itemView.setOnClickListener(mainAct);
+        itemView.setOnLongClickListener(mainAct);
         return new NoteViewHolder(itemView);
     }
 
