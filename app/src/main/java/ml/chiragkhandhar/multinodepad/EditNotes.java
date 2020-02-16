@@ -1,9 +1,11 @@
 package ml.chiragkhandhar.multinodepad;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,8 +13,10 @@ import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.JsonWriter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,14 +162,52 @@ public class EditNotes extends AppCompatActivity {
             return true;
         else
             return false;
-
     }
 
     @Override
     public void onBackPressed()
     {
-        super.onBackPressed();
+        if (!title.getText().toString().equals("") && !desc.getText().toString().equals(""))
+        {
+            createAlert();
+        }
+        else
+            super.onBackPressed();
+
     }
+
+    private void createAlert()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                if(detectChange())
+                    saveClicked();
+                else
+                    finish();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                finish();
+            }
+        });
+
+        builder.setTitle(getString(R.string.sv_dialog_title));
+        builder.setMessage("Save Note '"+ title.getText()+"' ?");
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
 
     public void saveClicked()
     {
@@ -179,6 +221,7 @@ public class EditNotes extends AppCompatActivity {
         if(pos!=-1)
             data.putExtra("position",pos);
         setResult(RESULT_OK,data);
+        Toast.makeText(this,"Saved",Toast.LENGTH_SHORT).show();
         finish();
     }
 }

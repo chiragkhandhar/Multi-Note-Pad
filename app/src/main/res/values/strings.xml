@@ -11,5 +11,8 @@
     <string name="noNotes">Empty Notes are not saved</string>
     <string name="noTitle">Notes with no title are not saved</string>
     <string name="noDesc">Notes with no content are not saved</string>
-
+    <string name="sv_dialog_title">You have not saved your note.</string>
+    <string name="multi_node_app">Multi Note Pad</string>
+    <string name="developer">Designed and developed by\nChirag Khandhar</string>
+    <string name="yearVersion">2020 | Version 1.0</string>
 </resources>

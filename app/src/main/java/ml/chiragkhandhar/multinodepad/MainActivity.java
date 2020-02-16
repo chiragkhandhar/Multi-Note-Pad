@@ -2,10 +2,12 @@ package ml.chiragkhandhar.multinodepad;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -74,12 +76,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onLongClick(View view)
     {
-        int pos = rv.getChildLayoutPosition(view);
-        notesArrayList.remove(pos);
-        notesAdapter.notifyDataSetChanged();
-        updateTitle();
-
+        deleteAlert(view);
         return true;
+    }
+
+    private void deleteAlert(final View v)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                int pos = rv.getChildLayoutPosition(v);
+                notesArrayList.remove(pos);
+                notesAdapter.notifyDataSetChanged();
+                updateTitle();
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+
+            }
+        });
+
+        builder.setTitle("Delete this note?");
+        builder.setMessage("This action cannot be undone.");
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
     private void setupComps()
@@ -147,10 +178,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId())
         {
             case R.id.aboutOption:
+                Intent i1 = new Intent(this,AboutActivity.class);
+                startActivity(i1);
                 break;
             case R.id.newOption:
-                Intent i = new Intent(this, EditNotes.class);
-                startActivityForResult(i,SV_RC);
+                Intent i2 = new Intent(this, EditNotes.class);
+                startActivityForResult(i2,SV_RC);
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();

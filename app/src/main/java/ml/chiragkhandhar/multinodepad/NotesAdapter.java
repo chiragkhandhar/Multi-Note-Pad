@@ -16,9 +16,23 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteViewHolder>
     private List<Notes> noteList;
     private  MainActivity mainAct;
 
-    NotesAdapter(List<Notes> noteList, MainActivity mainAct) {
+    NotesAdapter(List<Notes> noteList, MainActivity mainAct)
+    {
         this.noteList = noteList;
         this.mainAct = mainAct;
+    }
+
+    private  String truncateDesc(String desc)
+    {
+        if (desc.length() > 80)
+        {
+            String temp;
+            temp = desc.substring(0,80);
+            temp = temp + "...";
+            return  temp;
+        }
+        else
+            return desc;
     }
 
     @NonNull
@@ -39,7 +53,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteViewHolder>
         Log.d(TAG, "onBindViewHolder: ");
         Notes n = noteList.get(position);
         holder.noteTitleVH.setText(n.getTitle());
-        holder.noteDescVH.setText(n.getDesc());
+        holder.noteDescVH.setText(truncateDesc(n.getDesc()));
         holder.dateVH.setText(n.getDate());
 
     }
