@@ -69,7 +69,7 @@ public class EditNotes extends AppCompatActivity {
        
         if (data.hasExtra("position"))
         {
-            pos = (int) data.getIntExtra("position",-1);
+            pos = data.getIntExtra("position",-1);
         }
         updateCounter();
         desc.addTextChangedListener(new TextWatcher() {
@@ -167,7 +167,7 @@ public class EditNotes extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        if (!title.getText().toString().equals("") && !desc.getText().toString().equals(""))
+        if (!title.getText().toString().equals("") && !desc.getText().toString().equals("") && detectChange())
         {
             createAlert();
         }
@@ -207,7 +207,6 @@ public class EditNotes extends AppCompatActivity {
         dialog.show();
 
     }
-
 
     public void saveClicked()
     {

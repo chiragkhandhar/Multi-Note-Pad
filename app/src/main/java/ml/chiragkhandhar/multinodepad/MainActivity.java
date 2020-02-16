@@ -41,17 +41,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setupComps();
 
-
         notesAdapter = new NotesAdapter(notesArrayList,this);
 
         rv.setAdapter(notesAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
         loadJsonFile();
         updateTitle();
-
-
-
     }
+
 
     public void updateTitle()
     {
@@ -196,34 +193,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
     {
-        switch (requestCode)
-        {
-            case SV_RC:
-                if(resultCode == RESULT_OK)
-                {
-                    Notes temp = new Notes();
-                    temp.setTitle(data.getStringExtra("title"));
-                    temp.setDesc(data.getStringExtra("desc"));
-                    temp.setDate(data.getStringExtra("date"));
-                    notesArrayList.add(0,temp);
-                    notesAdapter.notifyDataSetChanged();
-                }
-                break;
-            case ED_RC:
-                if(resultCode == RESULT_OK)
-                {
-                    Notes temp = new Notes();
-                    temp.setTitle(data.getStringExtra("title"));
-                    temp.setDesc(data.getStringExtra("desc"));
-                    temp.setDate(data.getStringExtra("date"));
-                    notesArrayList.remove(data.getIntExtra("position",-1));
-                    notesArrayList.add(0,temp);
-                    notesAdapter.notifyDataSetChanged();
-                }
-                break;
-            default:
-                Log.d(TAG, "onActivityResult: Request Code" + requestCode);
+        try {
+
+            switch (requestCode) {
+                case SV_RC:
+                    if (resultCode == RESULT_OK) {
+                        Notes temp = new Notes();
+                        temp.setTitle(data.getStringExtra("title"));
+                        temp.setDesc(data.getStringExtra("desc"));
+                        temp.setDate(data.getStringExtra("date"));
+                        notesArrayList.add(0, temp);
+                        notesAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case ED_RC:
+                    if (resultCode == RESULT_OK) {
+                        Notes temp = new Notes();
+                        temp.setTitle(data.getStringExtra("title"));
+                        temp.setDesc(data.getStringExtra("desc"));
+                        temp.setDate(data.getStringExtra("date"));
+                        notesArrayList.remove(data.getIntExtra("position", -1));
+                        notesArrayList.add(0, temp);
+                        notesAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                default:
+                    Log.d(TAG, "onActivityResult: Request Code" + requestCode);
+            }
         }
+        catch (Exception e)
+        {
+            Toast.makeText(this, "Null Pointer encountered.", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
