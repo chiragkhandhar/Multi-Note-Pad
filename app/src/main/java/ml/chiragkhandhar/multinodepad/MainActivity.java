@@ -45,6 +45,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rv.setAdapter(notesAdapter);
         rv.setLayoutManager(new LinearLayoutManager(this));
         loadJsonFile();
+        updateTitle();
+
+
+
+    }
+
+    public void updateTitle()
+    {
+        int totalNotes = notesArrayList.size();
+        if (totalNotes != 0)
+            setTitle(getString(R.string.app_name)+ " [" + totalNotes + "]");
+        else
+            setTitle(getString(R.string.app_name));
     }
 
     @Override
@@ -56,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         data.putExtra("noteData", n);
         data.putExtra("position", pos);
         startActivityForResult(data,ED_RC);
-        Log.d(TAG, "onClick: bp: pos: "+pos);
     }
 
     @Override
@@ -65,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int pos = rv.getChildLayoutPosition(view);
         notesArrayList.remove(pos);
         notesAdapter.notifyDataSetChanged();
+        updateTitle();
 
         return true;
     }
@@ -156,15 +169,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(resultCode == RESULT_OK)
                 {
                     Notes temp = new Notes();
-
                     temp.setTitle(data.getStringExtra("title"));
                     temp.setDesc(data.getStringExtra("desc"));
                     temp.setDate(data.getStringExtra("date"));
                     notesArrayList.add(0,temp);
-
-                    Log.d(TAG, "onActivityResult: bp:  Title: " + data.getStringExtra("title"));
-                    Log.d(TAG, "onActivityResult: bp: Desc: " + data.getStringExtra("desc"));
-                    Log.d(TAG, "onActivityResult: bp: Date: " + data.getStringExtra("date"));
                     notesAdapter.notifyDataSetChanged();
                 }
                 break;
@@ -172,7 +180,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(resultCode == RESULT_OK)
                 {
                     Notes temp = new Notes();
-
                     temp.setTitle(data.getStringExtra("title"));
                     temp.setDesc(data.getStringExtra("desc"));
                     temp.setDate(data.getStringExtra("date"));
@@ -183,14 +190,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             default:
                 Log.d(TAG, "onActivityResult: Request Code" + requestCode);
-
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        updateTitle();
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         writeJsonFile();
+        updateTitle();
     }
 
     public void writeJsonFile()
@@ -217,7 +231,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ex.getStackTrace();
         }
     }
-
-
-
 }

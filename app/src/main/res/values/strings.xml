@@ -8,8 +8,8 @@
     <string name="about">About</string>
     <string name="newFile">New</string>
     <string name="savebtn">Save</string>
-    <string name="json_title">title</string>
-    <string name="json_desc">desc</string>
-    <string name="json_date">date</string>
+    <string name="noNotes">Empty Notes are not saved</string>
+    <string name="noTitle">Notes with no title are not saved</string>
+    <string name="noDesc">Notes with no content are not saved</string>
 
 </resources>

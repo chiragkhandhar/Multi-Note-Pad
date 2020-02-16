@@ -33,11 +33,10 @@ public class EditNotes extends AppCompatActivity {
 
     private static final String TAG = "EditNotes";
     private EditText title, desc;
-    private TextView date, counter;
+    private TextView counter;
     private Notes n;
     private String bT = "",bD = "", aT="",aD="";
     private int pos;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,14 +53,13 @@ public class EditNotes extends AppCompatActivity {
         Intent data = getIntent();
         if (data.hasExtra("noteData"))
         {
-            Log.d(TAG, "onCreate: bp: hasExtra");
             n = (Notes) data.getSerializableExtra("noteData");
             if (n != null)
             {
-                Log.d(TAG, "onCreate: bp: n | Title = " + n.getTitle());
                 title.setText(n.getTitle());
                 desc.setText(n.getDesc());
-                date.setText(n.getDate());
+                bT = n.getTitle();
+                bD = n.getDesc();
             }
         }
        
@@ -69,18 +67,18 @@ public class EditNotes extends AppCompatActivity {
         {
             pos = (int) data.getIntExtra("position",-1);
         }
-
+        updateCounter();
         desc.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
+            {
 
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
             {
-                int length = desc.length();
-                counter.setText(length +" "+getString(R.string.chars));
+                updateCounter();
             }
 
             @Override
@@ -90,98 +88,20 @@ public class EditNotes extends AppCompatActivity {
         });
     }
 
+    private void updateCounter()
+    {
+        int length = desc.length();
+        if (length!=0)
+            counter.setText(length +" "+getString(R.string.chars));
+        else
+            counter.setText("");
+    }
+
     private void setupComps()
     {
         title = findViewById(R.id.title);
         desc = findViewById(R.id.desc);
-        date = findViewById(R.id.dateVH);
         counter = findViewById(R.id.counter);
-    }
-
-
-
-    private Notes loadFile()
-    {
-        n = new Notes();
-        try
-        {
-            InputStream is = getApplicationContext().openFileInput(getString(R.string.file_name));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null)
-                sb.append(line);
-            // Creating JSON Object
-            JSONObject jo = new JSONObject(sb.toString());
-            String title = jo.getString("title");
-            String desc = jo.getString("desc");
-            String date = jo.getString("date");
-
-            n.setTitle(title);
-            n.setDesc(desc);
-            n.setDate(date);
-
-        }
-        catch (FileNotFoundException e)
-        {
-            Toast.makeText(this, "No Data Saved so far.",Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return n;
-    }
-
-//    @Override
-//    protected void onPause()
-//    {
-//        Date d;
-//
-//        aT = title.getText().toString();
-//        aD = desc.getText().toString();
-//        n.setTitle(aT);
-//        n.setDesc(aD);
-//        Log.d(TAG, "bp: bT = "+bT+" bD = "+bD+" aT = "+aT+" aD = "+aD);
-//
-//        if(bT.equals("") && bD.equals("") && aT.equals("") && aD.equals(""))
-//        {
-//            n.setDate("");
-//            Log.d(TAG, "bp: Date Not Updated");
-//        }
-//        else if(!bT.equals(aT) || !bD.equals(aD))
-//        {
-//            d = new Date();
-//            SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd',' YYYY hh:mm:ss a ");
-//            n.setDate(ft.format(d));
-//            Log.d(TAG, "bp: Date Updated.");
-//        }
-//
-//        saveNotes();
-//        super.onPause();
-//    }
-
-    private void saveNotes()
-    {
-        try
-        {
-            FileOutputStream fos = getApplicationContext().openFileOutput(getString(R.string.file_name), Context.MODE_PRIVATE);
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-            writer.setIndent("  ");
-            writer.beginObject();
-            writer.name("title").value(n.getTitle());
-            writer.name("desc").value(n.getDesc());
-            writer.name("date").value(n.getDate());
-            writer.endObject();
-            writer.close();
-            Toast.makeText(this,"Notes Saved",Toast.LENGTH_LONG).show();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -199,26 +119,46 @@ public class EditNotes extends AppCompatActivity {
             case R.id.svBtn:
                 if (title.getText().toString().equals("") && desc.getText().toString().equals(""))
                 {
+                    Toast.makeText(this,getString(R.string.noNotes),Toast.LENGTH_LONG).show();
                     finish();
 
                 }
                 else if (title.getText().toString().equals(""))
                 {
+                    Toast.makeText(this,getString(R.string.noTitle),Toast.LENGTH_LONG).show();
                     finish();
                 }
                 else if (desc.getText().toString().equals(""))
                 {
+                    Toast.makeText(this,getString(R.string.noDesc),Toast.LENGTH_LONG).show();
                     finish();
                 }
                 else
                 {
-                    saveClicked();
+                    if(detectChange())
+                        saveClicked();
+                    else
+                        finish();
                 }
                 break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean detectChange()
+    {
+        aT = title.getText().toString();
+        aD = desc.getText().toString();
+
+        if(bT.equals("") && bD.equals("") && aT.equals("") && aD.equals(""))
+            return false;
+        else if(!bT.equals(aT) || !bD.equals(aD))
+            return true;
+        else
+            return false;
+
     }
 
     @Override
@@ -232,7 +172,6 @@ public class EditNotes extends AppCompatActivity {
         Date d = new Date();
         SimpleDateFormat ft = new SimpleDateFormat ("E MMM dd',' YYYY hh:mm:ss a ");
 
-        Log.d(TAG, "saveClicked: bp: Executed saveNotes()");
         Intent data = new Intent();
         data.putExtra("title", title.getText().toString());
         data.putExtra("desc",desc.getText().toString());
@@ -241,6 +180,5 @@ public class EditNotes extends AppCompatActivity {
             data.putExtra("position",pos);
         setResult(RESULT_OK,data);
         finish();
-
     }
 }

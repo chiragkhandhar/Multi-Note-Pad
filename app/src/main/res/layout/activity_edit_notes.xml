@@ -21,6 +21,7 @@
         android:inputType="textPersonName"
         android:padding="5dp"
         android:textColor="@android:color/white"
+        android:textColorHint="@color/dark_subtitle"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,25 +44,12 @@
         android:padding="5dp"
         android:scrollbars="vertical"
         android:textAlignment="viewStart"
-        android:textColor="@color/dark_subtitle"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/dark_subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/counter" />
-
-    <TextView
-        android:id="@+id/dateVH"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/product_sans_regular"
-        android:padding="5dp"
-        android:textAlignment="viewStart"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:text="cishic" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -82,6 +70,6 @@
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:text="vjskdn ks" />
+        tools:text="Counter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
