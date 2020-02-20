@@ -8,7 +8,7 @@
   A modern, lightweight note pad with a minimalist design.
 </p>
 <p align="center">
-   <a style="text-decoration:none" href="https://github.com/JasonStein/Notepads/releases">
+   <a style="text-decoration:none" href="https://github.com/chiragkhandhar/Multi-Note-Pad/tree/master/APKS">
     <img src="https://img.shields.io/badge/Latest%20Version-v1.0-blue" alt="version" />
   </a>
   <a style="text-decoration:none">
@@ -43,7 +43,7 @@ So here comes the “Multi Note Pad” 🎉.
 
 ## Status update / Downloads :
 
-[[02-20-2020] Version 1.0](https://github.com/chiragkhandhar/Multi-Note-Pad/APKS/Multi_Note_Pad_v1.apk)
+[[02-20-2020] Version 1.0](https://github.com/chiragkhandhar/Multi-Note-Pad/blob/master/APKS/Multi_Note_Pad_v1.apk)
 
 ## Platform limitations :
 
