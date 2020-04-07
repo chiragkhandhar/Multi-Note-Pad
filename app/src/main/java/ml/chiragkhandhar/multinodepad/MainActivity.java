@@ -17,6 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener
 {
     private RecyclerView rv;
+    private FloatingActionButton newNote;
     private static final int SV_RC = 1, ED_RC = 2;
     private ArrayList<Notes> notesArrayList = new ArrayList<>();
     private  NotesAdapter notesAdapter;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rv.setLayoutManager(new LinearLayoutManager(this));
         loadJsonFile();
         updateTitle();
+
     }
 
 
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setupComps()
     {
         rv = findViewById(R.id.recycler);
+        newNote = findViewById(R.id.newNote);
     }
 
     public void loadJsonFile()
@@ -161,6 +167,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public void newNoteClicked(View v)
+    {
+        Intent i2 = new Intent(this, EditNotes.class);
+        startActivityForResult(i2,SV_RC);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -178,27 +190,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent i1 = new Intent(this,AboutActivity.class);
                 startActivity(i1);
                 break;
-            case R.id.newOption:
-                Intent i2 = new Intent(this, EditNotes.class);
-                startActivityForResult(i2,SV_RC);
-                break;
             default:
                 Toast.makeText(this,"Invalid Option",Toast.LENGTH_SHORT).show();
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         try {
 
             switch (requestCode) {
                 case SV_RC:
                     if (resultCode == RESULT_OK) {
                         Notes temp = new Notes();
+                        assert data != null;
                         temp.setTitle(data.getStringExtra("title"));
                         temp.setDesc(data.getStringExtra("desc"));
                         temp.setDate(data.getStringExtra("date"));
@@ -209,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case ED_RC:
                     if (resultCode == RESULT_OK) {
                         Notes temp = new Notes();
+                        assert data != null;
                         temp.setTitle(data.getStringExtra("title"));
                         temp.setDesc(data.getStringExtra("desc"));
                         temp.setDate(data.getStringExtra("date"));
@@ -220,9 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 default:
                     Log.d(TAG, "onActivityResult: Request Code" + requestCode);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Toast.makeText(this, "Null Pointer encountered.", Toast.LENGTH_SHORT).show();
         }
 
