@@ -9,7 +9,7 @@
 </p>
 <p align="center">
    <a style="text-decoration:none" href="https://github.com/chiragkhandhar/Multi-Note-Pad/tree/master/APKS">
-    <img src="https://img.shields.io/badge/Latest%20Version-v1.0-blue" alt="version" />
+    <img src="https://img.shields.io/badge/Latest%20Version-v1.2-blue" alt="version" />
   </a>
   <a style="text-decoration:none">
     <img src="https://img.shields.io/badge/Platform-Android-brightgreen" alt="Platform" />
@@ -43,7 +43,9 @@ So here comes the “Multi Note Pad” 🎉.
 
 ## Status update / Downloads :
 
-[[02-20-2020] Version 1.0](https://github.com/chiragkhandhar/Multi-Note-Pad/blob/master/APKS/Multi_Note_Pad_v1.apk)
+[[04-07-2020] Version 1.2](https://github.com/chiragkhandhar/Multi-Note-Pad/blob/master/APKS/Multi_Note_Pad_v1.2.apk)
+
+Check Releases tab for previous versions.
 
 ## Platform limitations :
 
