@@ -14,6 +14,9 @@
   <a style="text-decoration:none">
     <img src="https://img.shields.io/badge/Platform-Android-brightgreen" alt="Platform" />
   </a>
+   <a style="text-decoration:none" href="https://github.com/chiragkhandhar/Multi-Note-Pad/raw/master/APKS/Multi_Note_Pad_v1.2.apk">
+    <img src="https://img.shields.io/badge/Download-App-red" alt="Platform" />
+  </a>
 </p>
 
 ## What is Multi Note Pad and why do I care?
